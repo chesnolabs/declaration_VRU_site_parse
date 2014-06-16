@@ -5,7 +5,7 @@ The python 2.7 script written to get information about the number of deputies de
 
 Windows: Launch the script from command line by just typing filename and pressing enter. The script will create c:\dec7 folder where all the files will be saved.
 
-##The results of script looks as following:
+##The results of script look as following:
 
 1. list.csv - the list of declaration available on Verkhovna Rada website. Consists of 3 column: deputy fullname, declaration year and the way declaration publishe (pdf/data)
 2. no_dec.csv - the list of declaration the script could not get access to.
