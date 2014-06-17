@@ -6,7 +6,6 @@ import codecs
 import os
 import sys
 import time
-import string
 from urllib import urlopen, urlretrieve
 from bs4 import BeautifulSoup
 from unidecode import unidecode
@@ -19,7 +18,7 @@ MAIN_URL = 'http://w1.c1.rada.gov.ua/pls/site2/fetch_mps?skl_id=8'
 DECLARATION_LIST_URL_PATTERN = 'http://gapp.rada.gov.ua/declview/home/preview/%s'
 DECLARATION_URL_PATTERN = 'http://gapp.rada.gov.ua%s'
 
-FOLDER = 'c:/dec7/'
+FOLDER = 'c:/dec8/'
 TSV_FILE = FOLDER + 'declarations.tsv'
 CSV_FILE = FOLDER + 'list.csv'
 NO_DEC_FILE = FOLDER + 'no_dec.csv'
@@ -115,7 +114,7 @@ def complete_content(p):
     '''
     res = list()
     while '<' in p and p[:p.find('<')]:
-        new_string = p[:p.find('<')].strip('\r\n')
+        new_string = p[:p.find('<')].strip('\r\n').replace('\r\n','')
         res.append(new_string)
         p=p[p.find('>')+1:]
     return res
