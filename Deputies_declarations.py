@@ -513,7 +513,7 @@ def main(url):
                     print 'get page', DECLARATION_URL_PATTERN % declaration[0]
                     if 'GetFile' in declaration[0]:
                         #download declaration
-                        #urlretrieve (DECLARATION_URL_PATTERN % declaration[0], FOLDER + get_dec_file_name(unidecode(people_list[person_id][1]),declaration[1]))
+                        urlretrieve (DECLARATION_URL_PATTERN % declaration[0], FOLDER + get_dec_file_name(unidecode(people_list[person_id][1]),declaration[1]))
                         #write deputy in csv_file
                         a = codecs.open(CSV_FILE,'a',encoding='cp1251')
                         a.write(people_list[person_id][1] + "," + declaration[1] + "," + "pdf" + '\n')
