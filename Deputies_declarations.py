@@ -28,7 +28,7 @@ FIELDS = ['person', 'position', 'declaration_year', 'source_type', 'point_code',
     'Sum1_property', 'Sum2_leasing', 'Name_of_country', 'Name_of_currency', 'Sum3_income_in_currency', 'block', 'additional_information', 'decl_section']
 
 #Globals for catching exceptions
-SLEEP_TIME = 5
+SLEEP_TIME = 1
 TRIES = 2
 
 
@@ -82,18 +82,22 @@ def get_page(FetchAddress):
 
 
 def get_people (url):
+
     '''
     Takes link on the page with deputies list and returns dictionary {id_person:link on deputy page, deputy's name}
     '''
     list_of_dep = {}
     page = get_page(url)
     if page!=None:
-        soup = BeautifulSoup(page,fromEncoding=ENCODING)
+        soup = BeautifulSoup(page)
     else:
         print "Can't get a list of deputies after " + str(TRIES) + " attempt(s). Possible, www.rada.gov.ua is not callable"
         return {}
     for link in soup.findAll('a', target="_blank"):
-        list_of_dep[get_person_id(link['href'])] = [link['href'], link.string]
+        if link.string:
+            #this strange construction needs to fix next bug: BS4 gives u'<string in cp1251>' instead u'unicode string'
+            deputy_name = repr(link.string)[2:-1].replace(' ','\\x20').replace("'","\\x27").replace('\\x','').decode('hex')
+            list_of_dep[get_person_id(link['href'])] = [link['href'], unicode(deputy_name,'cp1251')]
     return list_of_dep
 
 
@@ -211,7 +215,10 @@ def parse_decl(page, person_name, year):
             if not i.decode_contents().isdigit():
                 s['additional_information'] = i.decode_contents()
             s['Name_of_country'] = income_country
-            s['Name_of_currency'] = currency_income.split(' ')[1]
+            try:
+                s['Name_of_currency'] = currency_income.split(' ')[1]
+            except IndexError:
+                s['Name_of_currency'] = u'назву валюти не зазначено'
             s['Sum3_income_in_currency'] = currency_income.split(' ')[0]
             if any([s['content'], s['Sum3_income_in_currency']]):
                 form_decl_string(s)
@@ -232,7 +239,10 @@ def parse_decl(page, person_name, year):
             if not s['content']:
                 s['additional_information'] = i.decode_contents()
             s['Name_of_country'] = income_country
-            s['Name_of_currency'] = currency_income.split(' ')[1]
+            try:
+                s['Name_of_currency'] = currency_income.split(' ')[1]
+            except IndexError:
+                s['Name_of_currency'] = u'назву валюти не зазначено'
             s['Sum3_income_in_currency'] = currency_income.split(' ')[0]
             if any([s['content'], s['Sum3_income_in_currency']]):
                 form_decl_string(s)
